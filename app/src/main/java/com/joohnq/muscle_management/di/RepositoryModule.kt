@@ -9,5 +9,5 @@ import org.koin.dsl.module
 
 val repositoryModule: Module = module {
     single<TrainingRepository> { TrainingRepositoryImpl(get()) }
-    single<ExerciseRepository> { ExerciseRepositoryImpl(get(), get()) }
+    single<ExerciseRepository> { ExerciseRepositoryImpl(get()) }
 }
