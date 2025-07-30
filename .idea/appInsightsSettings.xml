@@ -22,10 +22,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.joohnq.muscle_management" />
+                  <option name="mobileSdkAppId" value="1:39803099867:android:81b6424b28b01dc9000afe" />
+                  <option name="projectId" value="muscle-management-59d1e" />
+                  <option name="projectNumber" value="39803099867" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
