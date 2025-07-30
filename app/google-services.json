@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "39803099867",
+    "project_id": "muscle-management-59d1e",
+    "storage_bucket": "muscle-management-59d1e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:39803099867:android:81b6424b28b01dc9000afe",
+        "android_client_info": {
+          "package_name": "com.joohnq.muscle_management"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzXC9fbD55JggIPBfyvrAjI_TdbHwzwiY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
