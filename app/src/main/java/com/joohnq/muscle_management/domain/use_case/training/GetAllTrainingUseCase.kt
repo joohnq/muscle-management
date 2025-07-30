@@ -1,0 +1,17 @@
+package com.joohnq.muscle_management.domain.use_case.training
+
+import com.joohnq.muscle_management.domain.entity.domain.Training
+import com.joohnq.muscle_management.domain.repository.TrainingRepository
+
+class GetAllTrainingUseCase(
+    val repository: TrainingRepository
+) {
+    suspend operator fun invoke(): Result<List<Training>> {
+        return try {
+            val result = repository.getAll()
+            Result.success(result)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+}
