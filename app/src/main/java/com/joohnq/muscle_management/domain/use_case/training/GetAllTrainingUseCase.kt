@@ -1,6 +1,6 @@
 package com.joohnq.muscle_management.domain.use_case.training
 
-import com.joohnq.muscle_management.domain.entity.domain.Training
+import com.joohnq.muscle_management.domain.entity.Training
 import com.joohnq.muscle_management.domain.repository.TrainingRepository
 
 class GetAllTrainingUseCase(
