@@ -1,7 +1,7 @@
 package com.joohnq.muscle_management.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.joohnq.muscle_management.domain.entity.domain.Training
+import com.joohnq.muscle_management.domain.entity.Training
 import com.joohnq.muscle_management.domain.repository.TrainingRepository
 import kotlinx.coroutines.tasks.await
 

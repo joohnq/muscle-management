@@ -1,6 +1,6 @@
 package com.joohnq.muscle_management.domain.repository
 
-import com.joohnq.muscle_management.domain.entity.domain.Training
+import com.joohnq.muscle_management.domain.entity.Training
 
 interface TrainingRepository {
     suspend fun getAll(): List<Training>
