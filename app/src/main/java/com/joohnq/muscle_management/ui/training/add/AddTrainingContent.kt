@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,39 +18,28 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.joohnq.muscle_management.R
 import com.joohnq.muscle_management.domain.entity.Exercise
 import com.joohnq.muscle_management.ui.component.EnhancedExerciseItem
 import com.joohnq.muscle_management.ui.component.EnhancedTrainingTextField
@@ -145,7 +133,13 @@ fun AddTrainingContent(
                                 placeholder = "Ex: Treino de Peito",
                                 value = state.training.name,
                                 errorText = state.trainingNameError,
-                                onValueChange = { onIntent(AddTrainingContract.Intent.UpdateTrainingName(it)) },
+                                onValueChange = {
+                                    onIntent(
+                                        AddTrainingContract.Intent.UpdateTrainingName(
+                                            it
+                                        )
+                                    )
+                                },
                                 leadingIcon = {
                                     Icon(
                                         imageVector = Icons.Default.Edit,
@@ -187,25 +181,33 @@ fun AddTrainingContent(
                 EnhancedExerciseItem(
                     exercise = exercise,
                     isEditing = state.editingExerciseId == exercise.id,
+                    nameError = if (state.editingExerciseErrorId == exercise.id) state.editingExerciseNameError else null,
+                    imageError = if (state.editingExerciseErrorId == exercise.id) state.editingExerciseImageError else null,
                     onDelete = { onIntent(AddTrainingContract.Intent.DeleteExercise(exercise.id)) },
                     onEditToggle = { onIntent(AddTrainingContract.Intent.ToggleExerciseEdit(exercise.id)) },
                     onNameChange = { newName ->
-                        onIntent(AddTrainingContract.Intent.UpdateExerciseName(
-                            id = exercise.id,
-                            name = newName
-                        ))
+                        onIntent(
+                            AddTrainingContract.Intent.UpdateExerciseName(
+                                id = exercise.id,
+                                name = newName
+                            )
+                        )
                     },
                     onImageChange = { newImage ->
-                        onIntent(AddTrainingContract.Intent.UpdateExerciseImage(
-                            id = exercise.id,
-                            image = newImage
-                        ))
+                        onIntent(
+                            AddTrainingContract.Intent.UpdateExerciseImage(
+                                id = exercise.id,
+                                image = newImage
+                            )
+                        )
                     },
                     onObservationsChange = { newObservations ->
-                        onIntent(AddTrainingContract.Intent.UpdateExerciseObservations(
-                            id = exercise.id,
-                            observations = newObservations
-                        ))
+                        onIntent(
+                            AddTrainingContract.Intent.UpdateExerciseObservations(
+                                id = exercise.id,
+                                observations = newObservations
+                            )
+                        )
                     },
                 )
             }

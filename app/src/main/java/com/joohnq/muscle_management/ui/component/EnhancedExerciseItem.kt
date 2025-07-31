@@ -31,6 +31,8 @@ fun EnhancedExerciseItem(
     modifier: Modifier = Modifier,
     exercise: Exercise,
     isEditing: Boolean,
+    nameError: String? = null,
+    imageError: String? = null,
     onDelete: () -> Unit,
     onEditToggle: () -> Unit,
     onNameChange: (String) -> Unit,
@@ -100,6 +102,7 @@ fun EnhancedExerciseItem(
                 label = "Nome do Exercício",
                 placeholder = "Ex: Supino Reto",
                 value = exercise.name,
+                errorText = nameError,
                 onValueChange = onNameChange,
                 isEditing = isEditing,
                 leadingIcon = {
@@ -115,6 +118,7 @@ fun EnhancedExerciseItem(
                 label = "Imagem (URL)",
                 placeholder = "Ex: https://exemplo.com/imagem.jpg",
                 value = exercise.image,
+                errorText = imageError,
                 onValueChange = onImageChange,
                 isEditing = isEditing,
                 leadingIcon = {

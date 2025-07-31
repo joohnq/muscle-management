@@ -1,5 +1,6 @@
 package com.joohnq.muscle_management.ui.training.add
 
+import android.util.Patterns
 import androidx.lifecycle.viewModelScope
 import com.joohnq.muscle_management.domain.entity.Exercise
 import com.joohnq.muscle_management.domain.use_case.training.AddTrainingUseCase
@@ -67,7 +68,8 @@ class AddTrainingViewModel(
                             } else {
                                 exercise
                             }
-                        }
+                        },
+                        editingExerciseImageError = null
                     )
                 }
             }
@@ -81,7 +83,8 @@ class AddTrainingViewModel(
                             } else {
                                 exercise
                             }
-                        }
+                        },
+                        editingExerciseNameError = null
                     )
                 }
             }
@@ -95,7 +98,7 @@ class AddTrainingViewModel(
                             } else {
                                 exercise
                             }
-                        }
+                        },
                     )
                 }
             }
@@ -116,13 +119,19 @@ class AddTrainingViewModel(
 
     private fun addTraining() {
         validateTraining()
+        validateExercises()
 
-        if (!state.value.trainingNameError.isNullOrBlank() || !state.value.trainingDescriptionError.isNullOrBlank())
+        if (
+            !state.value.trainingNameError.isNullOrBlank() ||
+            !state.value.trainingDescriptionError.isNullOrBlank() ||
+            !state.value.editingExerciseNameError.isNullOrBlank() ||
+            !state.value.editingExerciseImageError.isNullOrBlank()
+        )
             return
 
         viewModelScope.launch {
             try {
-                updateState { it.copy(isLoading = true)}
+                updateState { it.copy(isLoading = true) }
                 executeTrainingUseCase()
 
                 emitEffect(AddTrainingContract.SideEffect.NavigateBack)
@@ -144,12 +153,32 @@ class AddTrainingViewModel(
                 )
             }
         }
+    }
 
-        if (state.value.training.description == "") {
-            updateState {
-                it.copy(
-                    trainingDescriptionError = "A descrição do treino é obrigatório"
-                )
+    private fun validateExercises() {
+        state.value.exercises.forEach { exercise ->
+            if (exercise.name == "") {
+                updateState {
+                    it.copy(
+                        editingExerciseNameError = "O nome do exercício é obrigatório",
+                        editingExerciseErrorId = exercise.id
+                    )
+                }
+            }
+
+            if (exercise.image.isNotBlank()) {
+                if (
+                    (!exercise.image.startsWith("http://") ||
+                            !exercise.image.startsWith("https://"))
+                    && !Patterns.WEB_URL.matcher(exercise.image).matches()
+                ) {
+                    updateState {
+                        it.copy(
+                            editingExerciseImageError = "A URL da imagem é inválida",
+                            editingExerciseErrorId = exercise.id
+                        )
+                    }
+                }
             }
         }
     }

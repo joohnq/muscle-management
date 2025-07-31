@@ -12,21 +12,25 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun EnhancedExerciseTextField(
+    modifier: Modifier = Modifier,
     label: String,
     placeholder: String,
     value: String,
     onValueChange: (String) -> Unit,
+    errorText: String? = null,
     isEditing: Boolean,
-    modifier: Modifier = Modifier,
     singleLine: Boolean = true,
     minLines: Int = 1,
     leadingIcon: @Composable (() -> Unit)? = null
 ) {
+    val isError = !errorText.isNullOrBlank()
+
     if (isEditing) {
         EnhancedTrainingTextField(
             label = label,
             placeholder = placeholder,
             value = value,
+            errorText = errorText,
             onValueChange = onValueChange,
             modifier = modifier,
             singleLine = singleLine,
@@ -41,7 +45,8 @@ fun EnhancedExerciseTextField(
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = if (isError) MaterialTheme.colorScheme.error else
+                    MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
                 text = value.ifEmpty { "-" },
