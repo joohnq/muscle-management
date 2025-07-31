@@ -102,57 +102,7 @@ fun TrainingOverviewContent(
 }
 
 @Composable
-private fun SuccessView(
-    trainings: List<Pair<Training, List<Exercise>>>,
-    onClick: (Pair<Training, List<Exercise>>) -> Unit,
-    onDelete: (String) -> Unit
-) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(vertical = 16.dp)
-    ) {
-        items(
-            items = trainings,
-            key = { it.first.id }
-        ) { training ->
-            TrainingOverviewCard(
-                training = training,
-                onClick = { onClick(training) },
-                onDelete = { onDelete(training.first.id) },
-            )
-        }
-    }
-}
-
-@Composable
-fun LoadingView() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(48.dp),
-                color = MaterialTheme.colorScheme.primary,
-                strokeWidth = 4.dp
-            )
-            Text(
-                text = "Carregando treinos...",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
-}
-
-@Composable
-fun ErrorView(
+private fun ErrorView(
     error: Throwable?,
     onRetry: () -> Unit
 ) {
@@ -192,6 +142,56 @@ fun ErrorView(
             )
         ) {
             Text("Tentar novamente")
+        }
+    }
+}
+
+@Composable
+private fun LoadingView() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(48.dp),
+                color = MaterialTheme.colorScheme.primary,
+                strokeWidth = 4.dp
+            )
+            Text(
+                text = "Carregando treinos...",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+private fun SuccessView(
+    trainings: List<Pair<Training, List<Exercise>>>,
+    onClick: (Pair<Training, List<Exercise>>) -> Unit,
+    onDelete: (String) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(vertical = 16.dp)
+    ) {
+        items(
+            items = trainings,
+            key = { it.first.id }
+        ) { training ->
+            TrainingOverviewCard(
+                training = training,
+                onClick = { onClick(training) },
+                onDelete = { onDelete(training.first.id) },
+            )
         }
     }
 }
