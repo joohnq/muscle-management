@@ -1,6 +1,5 @@
 package com.joohnq.muscle_management.data.repository
 
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joohnq.muscle_management.domain.entity.Exercise
 import com.joohnq.muscle_management.domain.entity.Training
@@ -14,14 +13,34 @@ class TrainingRepositoryImpl(
 ) : TrainingRepository {
     private val collection = firestore.collection(TRAINING_COLLECTION_NAME)
 
-    override suspend fun getAll(): List<Training> {
-        val snapshot = collection.get().await()
-        return snapshot.toObjects(Training::class.java)
-    }
+    override suspend fun getAll(): List<Pair<Training, List<Exercise>>> =
+        withContext(Dispatchers.IO) {
+            val trainings = collection.get().await().toObjects(Training::class.java)
 
-    override suspend fun getById(id: String): Training? {
-        val document = collection.document(id).get().await()
-        return document.toObject(Training::class.java)
+            trainings.map { training ->
+                val exercises = collection
+                    .document(training.id)
+                    .collection(TRAINING_EXERCISES_COLLECTION_NAME)
+                    .get()
+                    .await()
+                    .toObjects(Exercise::class.java)
+
+               training to exercises
+            }
+        }
+
+    override suspend fun getById(id: String): Pair<Training, List<Exercise>>? = withContext(Dispatchers.IO) {
+        val trainingSnapshot = collection.document(id).get().await()
+        val training = trainingSnapshot.toObject(Training::class.java) ?: return@withContext null
+
+        val exercisesSnapshot = collection.document(id)
+            .collection(TRAINING_EXERCISES_COLLECTION_NAME)
+            .get()
+            .await()
+
+        val exercises = exercisesSnapshot.toObjects(Exercise::class.java)
+
+        training to exercises
     }
 
     override suspend fun add(training: Training, exercises: List<Exercise>) {
@@ -34,11 +53,14 @@ class TrainingRepositoryImpl(
             batch.set(trainingRef, training.copy(id = trainingId))
 
             exercises.forEach { exercise ->
-                val exerciseRef = trainingRef.collection(TRAINING_EXERCISES_COLLECTION_NAME).document()
-                batch.set(exerciseRef, exercise.copy(
-                    id = exerciseRef.id,
-                    trainingId = trainingId,
-                ))
+                val exerciseRef =
+                    trainingRef.collection(TRAINING_EXERCISES_COLLECTION_NAME).document()
+                batch.set(
+                    exerciseRef, exercise.copy(
+                        id = exerciseRef.id,
+                        trainingId = trainingId,
+                    )
+                )
             }
 
             batch.commit().await()

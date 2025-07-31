@@ -1,14 +1,13 @@
 package com.joohnq.muscle_management.domain.use_case.training
 
-import com.joohnq.muscle_management.domain.repository.ExerciseRepository
 import com.joohnq.muscle_management.domain.repository.TrainingRepository
 
 class DeleteTrainingUseCase(
     val repository: TrainingRepository
 ) {
-    suspend operator fun invoke(id: Int): Result<Unit> {
+    suspend operator fun invoke(id: String): Result<Unit> {
         return try {
-            repository.delete(id.toString())
+            repository.delete(id)
 
             Result.success(Unit)
         } catch (e: Exception) {

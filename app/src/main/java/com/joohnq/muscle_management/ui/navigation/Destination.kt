@@ -5,11 +5,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface Destination {
     @Serializable
-    data object Training: Destination
+    data object TrainingOverview : Destination
 
     @Serializable
-    data object AddTraining: Destination
+    data object AddTraining : Destination
 
     @Serializable
-    data object Splash: Destination
+    data object Splash : Destination
+
+    @Serializable
+    data class EditTraining(val id: String) : Destination
 }

@@ -157,6 +157,6 @@ class AddTrainingViewModel(
     private suspend fun executeTrainingUseCase() {
         val trainingResult = addTrainingUseCase(state.value.training, state.value.exercises)
 
-        return trainingResult.getOrElse { throw it }
+        return trainingResult.getOrThrow()
     }
 }

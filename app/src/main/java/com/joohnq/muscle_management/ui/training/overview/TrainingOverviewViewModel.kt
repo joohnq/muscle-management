@@ -45,6 +45,12 @@ class TrainingOverviewViewModel(
         viewModelScope.launch {
             try {
                 deleteTrainingUseCase(id)
+
+                updateState {
+                    it.copy(
+                        trainings = it.trainings.filter { training -> training.first.id != id }
+                    )
+                }
             } catch (e: Exception) {
                 emitEffect(TrainingOverviewContract.SideEffect.ShowError(e))
             }
