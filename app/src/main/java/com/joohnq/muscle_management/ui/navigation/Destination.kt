@@ -8,7 +8,7 @@ sealed interface Destination {
     data object Training: Destination
 
     @Serializable
-    data object Exercise: Destination
+    data object AddTraining: Destination
 
     @Serializable
     data object Splash: Destination
