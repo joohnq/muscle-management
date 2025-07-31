@@ -11,7 +11,6 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AddTrainingScreen(
-    padding: PaddingValues,
     onGoBack: () -> Unit,
     viewModel: AddTrainingViewModel = koinViewModel()
 ) {
@@ -36,7 +35,6 @@ fun AddTrainingScreen(
     }
 
     AddTrainingContent(
-        padding = padding,
         snackBarState = snackBarState,
         state = state,
         onIntent = viewModel::onIntent,

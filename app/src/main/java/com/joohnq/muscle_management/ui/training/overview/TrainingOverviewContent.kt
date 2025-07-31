@@ -38,13 +38,11 @@ import com.joohnq.muscle_management.ui.component.VerticalSpacer
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrainingOverviewContent(
-    padding: PaddingValues,
     state: TrainingOverviewContract.State,
     onEvent: (TrainingOverviewContract.Event) -> Unit = {},
     onIntent: (TrainingOverviewContract.Intent) -> Unit = {}
 ) {
     Scaffold(
-        modifier = Modifier.padding(padding),
         topBar = {
             TopAppBar(
                 title = {
@@ -75,7 +73,7 @@ fun TrainingOverviewContent(
                 state.isLoading -> LoadingView()
                 state.isError != null -> ErrorView(
                     error = state.isError,
-                    onRetry = { onEvent(TrainingOverviewContract.Event.Retry) })
+                    onRetry = { onIntent(TrainingOverviewContract.Intent.GetAll) })
 
                 state.trainings.isEmpty() && !state.isLoading -> EmptyView(onAddTraining = {
                     onEvent(
@@ -85,17 +83,10 @@ fun TrainingOverviewContent(
 
                 else -> SuccessView(
                     trainings = state.trainings,
-                    onTrainingClick = { training ->
+                    onClick = { training ->
                         onEvent(
                             TrainingOverviewContract.Event.EditTraining(
                                 training.first.id
-                            )
-                        )
-                    },
-                    onAddExercise = { trainingId ->
-                        onEvent(
-                            TrainingOverviewContract.Event.AddExercise(
-                                trainingId
                             )
                         )
                     },
@@ -113,8 +104,7 @@ fun TrainingOverviewContent(
 @Composable
 private fun SuccessView(
     trainings: List<Pair<Training, List<Exercise>>>,
-    onTrainingClick: (Pair<Training, List<Exercise>>) -> Unit,
-    onAddExercise: (String) -> Unit,
+    onClick: (Pair<Training, List<Exercise>>) -> Unit,
     onDelete: (String) -> Unit
 ) {
     LazyColumn(
@@ -130,16 +120,15 @@ private fun SuccessView(
         ) { training ->
             TrainingOverviewCard(
                 training = training,
-                onClick = { onTrainingClick(training) },
+                onClick = { onClick(training) },
                 onDelete = { onDelete(training.first.id) },
-                onAddExercise = { onAddExercise(training.first.id) }
             )
         }
     }
 }
 
 @Composable
-private fun LoadingView() {
+fun LoadingView() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -163,7 +152,7 @@ private fun LoadingView() {
 }
 
 @Composable
-private fun ErrorView(
+fun ErrorView(
     error: Throwable?,
     onRetry: () -> Unit
 ) {
@@ -253,7 +242,6 @@ private fun EmptyView(onAddTraining: () -> Unit) {
 @Composable
 fun TrainingContentPreview() {
     TrainingOverviewContent(
-        padding = PaddingValues(),
         state = TrainingOverviewContract.State(
             trainings = listOf(
                 Pair(
@@ -268,7 +256,6 @@ fun TrainingContentPreview() {
 @Composable
 fun TrainingContentEmptyPreview() {
     TrainingOverviewContent(
-        padding = PaddingValues(),
         state = TrainingOverviewContract.State(
             trainings = listOf()
         ),

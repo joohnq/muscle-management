@@ -6,7 +6,6 @@ import com.joohnq.muscle_management.domain.entity.Training
 sealed interface TrainingOverviewContract {
     sealed interface Event {
         data object AddTraining : Event
-        data object Retry : Event
         data class EditTraining(val id: String) : Event
         data class AddExercise(val id: String) : Event
     }

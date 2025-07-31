@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -30,8 +28,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -40,28 +36,48 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.joohnq.muscle_management.domain.entity.Exercise
 import com.joohnq.muscle_management.ui.component.EnhancedExerciseItem
 import com.joohnq.muscle_management.ui.component.EnhancedTrainingTextField
+import com.joohnq.muscle_management.ui.training.overview.ErrorView
+import com.joohnq.muscle_management.ui.training.overview.LoadingView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditTrainingContent(
-    padding: PaddingValues,
     snackBarState: SnackbarHostState = remember { SnackbarHostState() },
     state: EditTrainingContract.State,
     onEvent: (EditTrainingContract.Event) -> Unit = {},
     onIntent: (EditTrainingContract.Intent) -> Unit = {}
 ) {
-    val scrollState = rememberLazyListState()
+    when {
+        state.isLoading -> LoadingView()
+        state.isError != null -> ErrorView(
+            error = state.isError,
+            onRetry = { onIntent(EditTrainingContract.Intent.GetTraining(state.training.id)) }
+        )
 
+        else -> SuccessView(
+            snackBarState = snackBarState,
+            state = state,
+            onIntent = onIntent,
+            onEvent = onEvent
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SuccessView(
+    snackBarState: SnackbarHostState,
+    state: EditTrainingContract.State,
+    onIntent: (EditTrainingContract.Intent) -> Unit,
+    onEvent: (EditTrainingContract.Event) -> Unit
+) {
     Scaffold(
-        modifier = Modifier.padding(padding),
         snackbarHost = { SnackbarHost(snackBarState) },
         topBar = {
             TopAppBar(
@@ -92,7 +108,6 @@ fun EditTrainingContent(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = { onIntent(EditTrainingContract.Intent.UpdateTraining) },
-                modifier = Modifier.padding(16.dp),
                 icon = {
                     Icon(
                         Icons.Default.Check,
@@ -108,7 +123,7 @@ fun EditTrainingContent(
         containerColor = MaterialTheme.colorScheme.surfaceVariant
     ) { innerPadding ->
         LazyColumn(
-            state = scrollState,
+            state = rememberLazyListState(),
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
@@ -263,7 +278,6 @@ fun EditTrainingContent(
 @Composable
 private fun Preview() {
     EditTrainingContent(
-        padding = PaddingValues(),
         state = EditTrainingContract.State(),
         onEvent = {}
     )

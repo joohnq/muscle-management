@@ -25,23 +25,25 @@ class TrainingRepositoryImpl(
                     .await()
                     .toObjects(Exercise::class.java)
 
-               training to exercises
+                training to exercises
             }
         }
 
-    override suspend fun getById(id: String): Pair<Training, List<Exercise>>? = withContext(Dispatchers.IO) {
-        val trainingSnapshot = collection.document(id).get().await()
-        val training = trainingSnapshot.toObject(Training::class.java) ?: return@withContext null
+    override suspend fun getById(id: String): Pair<Training, List<Exercise>>? =
+        withContext(Dispatchers.IO) {
+            val trainingSnapshot = collection.document(id).get().await()
+            val training =
+                trainingSnapshot.toObject(Training::class.java) ?: return@withContext null
 
-        val exercisesSnapshot = collection.document(id)
-            .collection(TRAINING_EXERCISES_COLLECTION_NAME)
-            .get()
-            .await()
+            val exercisesSnapshot = collection.document(id)
+                .collection(TRAINING_EXERCISES_COLLECTION_NAME)
+                .get()
+                .await()
 
-        val exercises = exercisesSnapshot.toObjects(Exercise::class.java)
+            val exercises = exercisesSnapshot.toObjects(Exercise::class.java)
 
-        training to exercises
-    }
+            training to exercises
+        }
 
     override suspend fun add(training: Training, exercises: List<Exercise>) {
         withContext(Dispatchers.IO) {
@@ -67,8 +69,29 @@ class TrainingRepositoryImpl(
         }
     }
 
-    override suspend fun update(training: Training) {
+    override suspend fun update(training: Training, exercises: List<Exercise>) {
         collection.document(training.id).set(training).await()
+
+        val existingExercises = collection.document(training.id)
+            .collection(TRAINING_EXERCISES_COLLECTION_NAME)
+            .get()
+            .await()
+
+        val batch = firestore.batch()
+        existingExercises.forEach { batch.delete(it.reference) }
+
+        exercises.forEach { exercise ->
+            val docRef = collection.document(training.id)
+                .collection(TRAINING_EXERCISES_COLLECTION_NAME)
+                .document(exercise.id)
+
+            batch.set(docRef, exercise.copy(
+                id = docRef.id,
+                trainingId = training.id
+            ))
+        }
+
+        batch.commit().await()
     }
 
     override suspend fun delete(id: String) {

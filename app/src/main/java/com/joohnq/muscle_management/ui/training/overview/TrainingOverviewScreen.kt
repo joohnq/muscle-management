@@ -9,7 +9,6 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun TrainingOverviewScreen(
-    padding: PaddingValues,
     onNavigateToAddTraining: () -> Unit,
     onEditTraining: (String) -> Unit,
     viewModel: TrainingOverviewViewModel = koinViewModel()
@@ -20,7 +19,6 @@ fun TrainingOverviewScreen(
         when (event) {
             TrainingOverviewContract.Event.AddTraining -> onNavigateToAddTraining()
             is TrainingOverviewContract.Event.AddExercise -> TODO()
-            TrainingOverviewContract.Event.Retry -> TODO()
             is TrainingOverviewContract.Event.EditTraining ->
                 onEditTraining(event.id)
         }
@@ -31,7 +29,6 @@ fun TrainingOverviewScreen(
     }
 
     TrainingOverviewContent(
-        padding = padding,
         state = state,
         onEvent = ::onEvent,
         onIntent = viewModel::onIntent

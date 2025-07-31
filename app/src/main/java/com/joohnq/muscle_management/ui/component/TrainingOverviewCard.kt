@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -30,11 +31,9 @@ import com.joohnq.muscle_management.domain.entity.Training
 fun TrainingOverviewCard(
     training: Pair<Training, List<Exercise>>,
     onClick: () -> Unit,
-    onAddExercise: () -> Unit,
     onDelete: () -> Unit,
 ) {
     Card(
-        onClick = onClick,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface
@@ -102,7 +101,7 @@ fun TrainingOverviewCard(
             }
 
             Button(
-                onClick = { onAddExercise() },
+                onClick = { onClick() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
@@ -114,12 +113,12 @@ fun TrainingOverviewCard(
                 contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Adicionar exercício",
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Editar exercício",
                     modifier = Modifier.size(18.dp)
                 )
                 HorizontalSpacer(8.dp)
-                Text("Adicionar Exercício")
+                Text("Editar Exercício")
             }
         }
     }

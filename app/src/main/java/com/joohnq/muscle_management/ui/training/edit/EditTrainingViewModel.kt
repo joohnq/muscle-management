@@ -3,12 +3,14 @@ package com.joohnq.muscle_management.ui.training.edit
 import androidx.lifecycle.viewModelScope
 import com.joohnq.muscle_management.domain.entity.Exercise
 import com.joohnq.muscle_management.domain.use_case.training.GetByIdTrainingUseCase
+import com.joohnq.muscle_management.domain.use_case.training.UpdateTrainingUseCase
 import com.joohnq.muscle_management.ui.BaseViewModel
 import com.joohnq.muscle_management.ui.training.add.AddTrainingContract
 import kotlinx.coroutines.launch
 
 class EditTrainingViewModel(
     private val getByIdTrainingUseCase: GetByIdTrainingUseCase,
+    private val updateTrainingUseCase: UpdateTrainingUseCase,
     initialState: EditTrainingContract.State = EditTrainingContract.State()
 ) : BaseViewModel<EditTrainingContract.State, EditTrainingContract.Intent, EditTrainingContract.SideEffect>(
     initialState = initialState
@@ -120,6 +122,7 @@ class EditTrainingViewModel(
     private fun getTraining(id: String) {
         viewModelScope.launch {
             try {
+                updateState { it.copy(isLoading = true) }
                 val result = getByIdTrainingUseCase(id).getOrThrow()
 
                 updateState {
@@ -130,11 +133,55 @@ class EditTrainingViewModel(
                 }
             } catch (e: Exception) {
                 updateState { it.copy(isError = e) }
+            } finally {
+                updateState { it.copy(isLoading = false) }
             }
         }
     }
 
     private fun updateTraining() {
+        validateTraining()
 
+        if (!state.value.trainingNameError.isNullOrBlank() || !state.value.trainingDescriptionError.isNullOrBlank())
+            return
+
+        viewModelScope.launch {
+            try {
+                updateState { it.copy(isLoading = true)}
+                executeTrainingUseCase()
+
+                emitEffect(EditTrainingContract.SideEffect.NavigateBack)
+            } catch (e: Exception) {
+                emitEffect(EditTrainingContract.SideEffect.ShowError(e))
+
+                return@launch
+            } finally {
+                updateState { it.copy(isLoading = false) }
+            }
+        }
+    }
+
+    private fun validateTraining() {
+        if (state.value.training.name == "") {
+            updateState {
+                it.copy(
+                    trainingNameError = "O nome do treino é obrigatório"
+                )
+            }
+        }
+
+        if (state.value.training.description == "") {
+            updateState {
+                it.copy(
+                    trainingDescriptionError = "A descrição do treino é obrigatório"
+                )
+            }
+        }
+    }
+
+    private suspend fun executeTrainingUseCase() {
+        val trainingResult = updateTrainingUseCase(state.value.training, state.value.exercises)
+
+        return trainingResult.getOrThrow()
     }
 }

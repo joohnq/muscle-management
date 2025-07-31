@@ -59,7 +59,6 @@ import com.joohnq.muscle_management.ui.component.EnhancedTrainingTextField
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTrainingContent(
-    padding: PaddingValues,
     snackBarState: SnackbarHostState = remember { SnackbarHostState() },
     state: AddTrainingContract.State,
     onEvent: (AddTrainingContract.Event) -> Unit = {},
@@ -68,7 +67,6 @@ fun AddTrainingContent(
     val scrollState = rememberLazyListState()
 
     Scaffold(
-        modifier = Modifier.padding(padding),
         snackbarHost = { SnackbarHost(snackBarState) },
         topBar = {
             TopAppBar(
@@ -99,7 +97,6 @@ fun AddTrainingContent(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = { onIntent(AddTrainingContract.Intent.AddTraining) },
-                modifier = Modifier.padding(16.dp),
                 icon = {
                     Icon(
                         Icons.Default.Check,
@@ -248,7 +245,6 @@ fun AddTrainingContent(
 @Composable
 private fun Preview() {
     AddTrainingContent(
-        padding = PaddingValues(),
         state = AddTrainingContract.State(),
         onEvent = {}
     )
@@ -258,7 +254,6 @@ private fun Preview() {
 @Composable
 private fun Preview2() {
     AddTrainingContent(
-        padding = PaddingValues(),
         state = AddTrainingContract.State(
             trainingNameError = "Some error",
             trainingDescriptionError = "Some error",
@@ -271,7 +266,6 @@ private fun Preview2() {
 @Composable
 private fun Preview3() {
     AddTrainingContent(
-        padding = PaddingValues(),
         state = AddTrainingContract.State(
             exercises = listOf(
                 Exercise(
