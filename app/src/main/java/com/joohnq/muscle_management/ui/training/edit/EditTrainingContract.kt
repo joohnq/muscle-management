@@ -39,6 +39,9 @@ sealed interface EditTrainingContract {
         val trainingNameError: String? = null,
         val trainingDescriptionError: String? = null,
         val editingExerciseId: String? = null,
-        val isError: Throwable? = null
+        val isError: Throwable? = null,
+        val editingExerciseNameError: String? = null,
+        val editingExerciseImageError: String? = null,
+        val editingExerciseErrorId: String? = null,
     )
 }

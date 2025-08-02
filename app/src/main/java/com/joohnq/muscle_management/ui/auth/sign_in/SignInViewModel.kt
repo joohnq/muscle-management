@@ -16,7 +16,7 @@ class SignInViewModel(
             SignInContract.Intent.SignIn -> signIn()
             is SignInContract.Intent.UpdateEmail -> {
                 updateState {
-                    it.copy(email = intent.email)
+                    it.copy(email = it.email.copy(value = intent.email, error = null))
                 }
             }
 
@@ -28,7 +28,7 @@ class SignInViewModel(
 
             is SignInContract.Intent.UpdatePassword -> {
                 updateState {
-                    it.copy(password = intent.password)
+                    it.copy(password = it.password.copy(value = intent.password, error = null))
                 }
             }
         }
@@ -36,20 +36,18 @@ class SignInViewModel(
 
     private fun signIn() {
         viewModelScope.launch {
-            try {
-                updateState { it.copy(isLoading = true) }
+            updateState { it.copy(isLoading = true) }
 
-                signInUseCase(
-                    email = state.value.email,
-                    password = state.value.password
-                ).getOrThrow()
-
-                emitEffect(SignInContract.SideEffect.NavigateNext)
-            } catch (e: Exception) {
-                emitEffect(SignInContract.SideEffect.ShowError(e))
-            } finally {
-                updateState { it.copy(isLoading = false) }
+            signInUseCase(
+                email = state.value.email.value,
+                password = state.value.password.value
+            ).getOrElse { error ->
+                emitEffect(SignInContract.SideEffect.ShowError(error))
             }
+
+            emitEffect(SignInContract.SideEffect.NavigateNext)
+
+            updateState { it.copy(isLoading = false) }
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.joohnq.muscle_management.ui.auth.sign_up
 
+import com.joohnq.muscle_management.domain.entity.Field
+
 sealed interface SignUpContract {
     sealed interface Event {
         data object NavigateSignIn : Event
@@ -19,10 +21,8 @@ sealed interface SignUpContract {
     }
 
     data class State(
-        val email: String = "",
-        val emailError: String? = null,
-        val password: String = "",
-        val passwordError: String? = null,
+        val email: Field = Field(""),
+        val password: Field = Field(""),
         val isPasswordVisible: Boolean = false,
         val isLoading: Boolean = false,
         val isError: Throwable? = null,

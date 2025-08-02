@@ -1,6 +1,7 @@
 package com.joohnq.muscle_management.ui.auth.sign_in
 
 import com.joohnq.muscle_management.domain.entity.Exercise
+import com.joohnq.muscle_management.domain.entity.Field
 import com.joohnq.muscle_management.domain.entity.Training
 
 sealed interface SignInContract {
@@ -22,12 +23,9 @@ sealed interface SignInContract {
     }
 
     data class State(
-        val email: String = "",
-        val emailError: String? = null,
-        val password: String = "",
-        val passwordError: String? = null,
+        val email: Field = Field(""),
+        val password: Field = Field(""),
         val isPasswordVisible: Boolean = false,
         val isLoading: Boolean = false,
-        val isError: Throwable? = null,
     )
 }

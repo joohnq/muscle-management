@@ -10,6 +10,7 @@ class GetAllTrainingUseCase(
     suspend operator fun invoke(): Result<List<Pair<Training, List<Exercise>>>> {
         return try {
             val result = repository.getAll()
+
             Result.success(result)
         } catch (e: Exception) {
             Result.failure(e)

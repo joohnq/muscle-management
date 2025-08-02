@@ -3,7 +3,6 @@ package com.joohnq.muscle_management.ui.auth.sign_up
 import androidx.lifecycle.viewModelScope
 import com.joohnq.muscle_management.domain.use_case.auth.SignUpUseCase
 import com.joohnq.muscle_management.ui.BaseViewModel
-import com.joohnq.muscle_management.ui.auth.sign_in.SignInContract
 import kotlinx.coroutines.launch
 
 class SignUpViewModel(
@@ -17,7 +16,7 @@ class SignUpViewModel(
             SignUpContract.Intent.SignUp -> signUp()
             is SignUpContract.Intent.UpdateEmail -> {
                 updateState {
-                    it.copy(email = intent.email)
+                    it.copy(email = it.email.copy(value = intent.email, error = null))
                 }
             }
 
@@ -29,7 +28,7 @@ class SignUpViewModel(
 
             is SignUpContract.Intent.UpdatePassword -> {
                 updateState {
-                    it.copy(password = intent.password)
+                    it.copy(password = it.password.copy(value = intent.password, error = null))
                 }
             }
         }
@@ -37,20 +36,18 @@ class SignUpViewModel(
 
     private fun signUp() {
         viewModelScope.launch {
-            try {
-                updateState { it.copy(isLoading = true) }
+            updateState { it.copy(isLoading = true) }
 
-                signUpUseCase(
-                    email = state.value.email,
-                    password = state.value.password
-                ).getOrThrow()
-
-                emitEffect(SignUpContract.SideEffect.NavigateNext)
-            } catch (e: Exception) {
-                emitEffect(SignUpContract.SideEffect.ShowError(e))
-            } finally {
-                updateState { it.copy(isLoading = false) }
+            signUpUseCase(
+                email = state.value.email.value,
+                password = state.value.password.value
+            ).getOrElse { error ->
+                emitEffect(SignUpContract.SideEffect.ShowError(error))
             }
+
+            emitEffect(SignUpContract.SideEffect.NavigateNext)
+
+            updateState { it.copy(isLoading = false) }
         }
     }
 }

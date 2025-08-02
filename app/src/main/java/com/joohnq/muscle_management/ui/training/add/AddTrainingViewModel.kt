@@ -1,8 +1,8 @@
 package com.joohnq.muscle_management.ui.training.add
 
-import android.util.Patterns
 import androidx.lifecycle.viewModelScope
 import com.joohnq.muscle_management.domain.entity.Exercise
+import com.joohnq.muscle_management.domain.exception.TrainingException
 import com.joohnq.muscle_management.domain.use_case.training.AddTrainingUseCase
 import com.joohnq.muscle_management.ui.BaseViewModel
 import kotlinx.coroutines.launch
@@ -118,9 +118,6 @@ class AddTrainingViewModel(
     }
 
     private fun addTraining() {
-        validateTraining()
-        validateExercises()
-
         if (
             !state.value.trainingNameError.isNullOrBlank() ||
             !state.value.trainingDescriptionError.isNullOrBlank() ||
@@ -130,62 +127,38 @@ class AddTrainingViewModel(
             return
 
         viewModelScope.launch {
+            updateState { it.copy(isLoading = true) }
+
             try {
-                updateState { it.copy(isLoading = true) }
-                executeTrainingUseCase()
+                addTrainingUseCase(state.value.training, state.value.exercises)
+                    .getOrThrow()
 
                 emitEffect(AddTrainingContract.SideEffect.NavigateBack)
-            } catch (e: Exception) {
-                emitEffect(AddTrainingContract.SideEffect.ShowError(e))
-
-                return@launch
+            } catch (_: TrainingException.EmptyTrainingName) {
+                updateState {
+                    it.copy(
+                        trainingNameError = "O nome do treino é obrigatório"
+                    )
+                }
+            } catch (error: TrainingException.InvalidExerciseName) {
+                updateState {
+                    it.copy(
+                        editingExerciseNameError = "O nome do exercício é obrigatório",
+                        editingExerciseErrorId = error.id
+                    )
+                }
+            } catch (error: TrainingException.InvalidExerciseImage) {
+                updateState {
+                    it.copy(
+                        editingExerciseImageError = "A URL da imagem é inválida",
+                        editingExerciseErrorId = error.id
+                    )
+                }
+            } catch (error: Exception) {
+                emitEffect(AddTrainingContract.SideEffect.ShowError(error))
             } finally {
                 updateState { it.copy(isLoading = false) }
             }
         }
-    }
-
-    private fun validateTraining() {
-        if (state.value.training.name == "") {
-            updateState {
-                it.copy(
-                    trainingNameError = "O nome do treino é obrigatório"
-                )
-            }
-        }
-    }
-
-    private fun validateExercises() {
-        state.value.exercises.forEach { exercise ->
-            if (exercise.name == "") {
-                updateState {
-                    it.copy(
-                        editingExerciseNameError = "O nome do exercício é obrigatório",
-                        editingExerciseErrorId = exercise.id
-                    )
-                }
-            }
-
-            if (exercise.image.isNotBlank()) {
-                if (
-                    (!exercise.image.startsWith("http://") ||
-                            !exercise.image.startsWith("https://"))
-                    && !Patterns.WEB_URL.matcher(exercise.image).matches()
-                ) {
-                    updateState {
-                        it.copy(
-                            editingExerciseImageError = "A URL da imagem é inválida",
-                            editingExerciseErrorId = exercise.id
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    private suspend fun executeTrainingUseCase() {
-        val trainingResult = addTrainingUseCase(state.value.training, state.value.exercises)
-
-        return trainingResult.getOrThrow()
     }
 }
