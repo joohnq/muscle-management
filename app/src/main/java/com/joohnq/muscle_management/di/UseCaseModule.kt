@@ -1,5 +1,9 @@
 package com.joohnq.muscle_management.di
 
+import com.joohnq.muscle_management.domain.use_case.auth.GetUserIdUseCase
+import com.joohnq.muscle_management.domain.use_case.auth.SignInUseCase
+import com.joohnq.muscle_management.domain.use_case.auth.SignOutUseCase
+import com.joohnq.muscle_management.domain.use_case.auth.SignUpUseCase
 import com.joohnq.muscle_management.domain.use_case.training.AddTrainingUseCase
 import com.joohnq.muscle_management.domain.use_case.training.DeleteTrainingUseCase
 import com.joohnq.muscle_management.domain.use_case.training.GetAllTrainingUseCase
@@ -15,4 +19,9 @@ val useCaseModule: Module = module {
     singleOf(::DeleteTrainingUseCase)
     singleOf(::GetByIdTrainingUseCase)
     singleOf(::UpdateTrainingUseCase)
+
+    singleOf(::GetUserIdUseCase)
+    singleOf(::SignInUseCase)
+    singleOf(::SignOutUseCase)
+    singleOf(::SignUpUseCase)
 }

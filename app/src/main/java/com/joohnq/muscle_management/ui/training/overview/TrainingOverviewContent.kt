@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
@@ -19,10 +20,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -38,11 +42,13 @@ import com.joohnq.muscle_management.ui.component.VerticalSpacer
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrainingOverviewContent(
+    snackBarState: SnackbarHostState = remember { SnackbarHostState() },
     state: TrainingOverviewContract.State,
     onEvent: (TrainingOverviewContract.Event) -> Unit = {},
     onIntent: (TrainingOverviewContract.Intent) -> Unit = {}
 ) {
     Scaffold(
+        snackbarHost = { SnackbarHost(snackBarState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -54,7 +60,22 @@ fun TrainingOverviewContent(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+                ),
+                actions = {
+                    Button(
+                        onClick = { onIntent(TrainingOverviewContract.Intent.SignOut) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = "LogOut",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
             )
         },
         floatingActionButton = {

@@ -7,15 +7,16 @@ sealed interface TrainingOverviewContract {
     sealed interface Event {
         data object AddTraining : Event
         data class EditTraining(val id: String) : Event
-        data class AddExercise(val id: String) : Event
     }
 
     sealed interface Intent{
         data object GetAll: Intent
+        data object SignOut: Intent
         data class Delete(val id: String): Intent
     }
 
     sealed interface SideEffect{
+        data object NavigateToSignIn: SideEffect
         data class ShowError(val error: Throwable): SideEffect
     }
 
