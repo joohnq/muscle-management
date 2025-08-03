@@ -3,6 +3,7 @@ package com.joohnq.muscle_management.ui.training.add
 import androidx.lifecycle.viewModelScope
 import com.joohnq.muscle_management.domain.entity.Exercise
 import com.joohnq.muscle_management.domain.exception.TrainingException
+import com.joohnq.muscle_management.domain.exception.ValidationException
 import com.joohnq.muscle_management.domain.use_case.training.AddTrainingUseCase
 import com.joohnq.muscle_management.ui.BaseViewModel
 import kotlinx.coroutines.launch
@@ -134,25 +135,30 @@ class AddTrainingViewModel(
                     .getOrThrow()
 
                 emitEffect(AddTrainingContract.SideEffect.NavigateBack)
-            } catch (_: TrainingException.EmptyTrainingName) {
-                updateState {
-                    it.copy(
-                        trainingNameError = "O nome do treino é obrigatório"
-                    )
-                }
-            } catch (error: TrainingException.InvalidExerciseName) {
-                updateState {
-                    it.copy(
-                        editingExerciseNameError = "O nome do exercício é obrigatório",
-                        editingExerciseErrorId = error.id
-                    )
-                }
-            } catch (error: TrainingException.InvalidExerciseImage) {
-                updateState {
-                    it.copy(
-                        editingExerciseImageError = "A URL da imagem é inválida",
-                        editingExerciseErrorId = error.id
-                    )
+            } catch (e: ValidationException) {
+                e.errors.forEach { error ->
+                    when (error) {
+                        TrainingException.EmptyTrainingName ->
+                            updateState {
+                                it.copy(trainingNameError = "O nome do treino é obrigatório")
+                            }
+
+                        is TrainingException.InvalidExerciseName ->
+                            updateState {
+                                it.copy(
+                                    editingExerciseNameError = "O nome do exercício é obrigatório",
+                                    editingExerciseErrorId = error.id
+                                )
+                            }
+
+                        is TrainingException.InvalidExerciseImage ->
+                            updateState {
+                                it.copy(
+                                    editingExerciseImageError = "A URL da imagem é inválida",
+                                    editingExerciseErrorId = error.id
+                                )
+                            }
+                    }
                 }
             } catch (error: Exception) {
                 emitEffect(AddTrainingContract.SideEffect.ShowError(error))

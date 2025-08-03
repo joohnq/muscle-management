@@ -10,4 +10,7 @@ sealed class AuthException(message: String) : Exception(message) {
     class UserCollisionException : AuthException("Já existe uma conta com este e-mail.")
     class WeakPasswordException : AuthException("Senha fraca. Escolha uma mais segura.")
     class NetworkException : AuthException("Sem conexão com a internet.")
+    data object UserNotLogged : AuthException("O usuário deve estar logado.")
+    data object EmptyEmailException : AuthException("O e-mail deve ser preenchido.")
+    data object EmptyPasswordException : AuthException("A senha deve ser preenchido.")
 }

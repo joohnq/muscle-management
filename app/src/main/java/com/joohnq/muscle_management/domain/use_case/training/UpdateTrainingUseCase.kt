@@ -4,6 +4,7 @@ import android.util.Patterns
 import com.joohnq.muscle_management.domain.entity.Exercise
 import com.joohnq.muscle_management.domain.entity.Training
 import com.joohnq.muscle_management.domain.exception.TrainingException
+import com.joohnq.muscle_management.domain.exception.ValidationException
 import com.joohnq.muscle_management.domain.repository.TrainingRepository
 
 class UpdateTrainingUseCase(
@@ -11,12 +12,15 @@ class UpdateTrainingUseCase(
 ) {
     suspend operator fun invoke(training: Training, exercises: List<Exercise>): Result<Unit> {
         return try {
-            if (training.name == "")
-                error(TrainingException.EmptyTrainingName)
+            val errors = mutableListOf<Exception>()
+
+            if (training.name.isEmpty()) {
+                errors.add(TrainingException.EmptyTrainingName)
+            }
 
             exercises.forEach { exercise ->
                 if (exercise.name == "")
-                    error(TrainingException.InvalidExerciseName(exercise.id))
+                    errors.add(TrainingException.InvalidExerciseName(exercise.id))
 
                 if (exercise.image.isNotBlank()) {
                     if (
@@ -24,10 +28,13 @@ class UpdateTrainingUseCase(
                                 !exercise.image.startsWith("https://"))
                         && !Patterns.WEB_URL.matcher(exercise.image).matches()
                     ) {
-                        error(TrainingException.InvalidExerciseImage(exercise.id))
+                        errors.add(TrainingException.InvalidExerciseImage(exercise.id))
                     }
                 }
             }
+
+            if (errors.isNotEmpty())
+                return Result.failure(ValidationException(errors))
 
             repository.update(training, exercises)
 

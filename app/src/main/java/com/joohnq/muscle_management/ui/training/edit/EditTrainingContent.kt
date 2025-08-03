@@ -214,6 +214,8 @@ private fun SuccessView(
                     exercise = exercise,
                     isEditing = state.editingExerciseId == exercise.id,
                     onDelete = { onIntent(EditTrainingContract.Intent.DeleteExercise(exercise.id)) },
+                    nameError = if (state.editingExerciseErrorId == exercise.id) state.editingExerciseNameError else null,
+                    imageError = if (state.editingExerciseErrorId == exercise.id) state.editingExerciseImageError else null,
                     onEditToggle = {
                         onIntent(
                             EditTrainingContract.Intent.ToggleExerciseEdit(

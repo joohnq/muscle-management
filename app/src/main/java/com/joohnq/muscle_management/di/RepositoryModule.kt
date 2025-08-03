@@ -9,6 +9,15 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val repositoryModule: Module = module {
-    single<TrainingRepository> { TrainingRepositoryImpl(get()) } bind TrainingRepository::class
-    single<AuthRepository> { AuthRepositoryImpl(get()) } bind AuthRepository::class
+    single<AuthRepository> {
+        AuthRepositoryImpl(
+            auth = get()
+        )
+    } bind AuthRepository::class
+    single<TrainingRepository> {
+        TrainingRepositoryImpl(
+            firestore = get(),
+            authRepository = get()
+        )
+    } bind TrainingRepository::class
 }
