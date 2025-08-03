@@ -1,27 +1,22 @@
 package com.joohnq.muscle_management.domain.use_case.auth
 
-import android.util.Patterns
-import com.joohnq.muscle_management.domain.exception.AuthException
 import com.joohnq.muscle_management.domain.exception.ValidationException
 import com.joohnq.muscle_management.domain.mapper.AuthExceptionMapper
 import com.joohnq.muscle_management.domain.repository.AuthRepository
+import com.joohnq.muscle_management.domain.validator.EmailValidator
+import com.joohnq.muscle_management.domain.validator.PasswordValidator
 
 class SignUpUseCase(
-    val repository: AuthRepository
+    val repository: AuthRepository,
+    private val emailValidator: EmailValidator,
+    private val passwordValidator: PasswordValidator,
 ) {
     suspend operator fun invoke(email: String, password: String): Result<Unit> {
         return try {
             val errors = mutableListOf<Exception>()
 
-            if (email.isEmpty()) {
-                errors.add(AuthException.EmptyEmailException)
-            } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                errors.add(AuthException.InvalidEmailException())
-            }
-
-            if (password.isEmpty()) {
-                errors.add(AuthException.EmptyPasswordException)
-            }
+            errors.addAll(emailValidator.validate(email))
+            errors.addAll(passwordValidator.validate(password))
 
             if (errors.isNotEmpty())
                 return Result.failure(ValidationException(errors))

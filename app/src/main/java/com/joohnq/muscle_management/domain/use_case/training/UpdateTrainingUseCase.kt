@@ -1,36 +1,25 @@
 package com.joohnq.muscle_management.domain.use_case.training
 
-import android.util.Patterns
 import com.joohnq.muscle_management.domain.entity.Exercise
 import com.joohnq.muscle_management.domain.entity.Training
-import com.joohnq.muscle_management.domain.exception.TrainingException
 import com.joohnq.muscle_management.domain.exception.ValidationException
 import com.joohnq.muscle_management.domain.repository.TrainingRepository
+import com.joohnq.muscle_management.domain.validator.ExerciseValidator
+import com.joohnq.muscle_management.domain.validator.TrainingValidator
 
 class UpdateTrainingUseCase(
-    val repository: TrainingRepository
+    val repository: TrainingRepository,
+    private val trainingValidator: TrainingValidator,
+    private val exerciseValidator: ExerciseValidator,
 ) {
     suspend operator fun invoke(training: Training, exercises: List<Exercise>): Result<Unit> {
         return try {
             val errors = mutableListOf<Exception>()
 
-            if (training.name.isEmpty()) {
-                errors.add(TrainingException.EmptyTrainingName)
-            }
+            errors.addAll(trainingValidator.validate(training))
 
             exercises.forEach { exercise ->
-                if (exercise.name == "")
-                    errors.add(TrainingException.InvalidExerciseName(exercise.id))
-
-                if (exercise.image.isNotBlank()) {
-                    if (
-                        (!exercise.image.startsWith("http://") ||
-                                !exercise.image.startsWith("https://"))
-                        && !Patterns.WEB_URL.matcher(exercise.image).matches()
-                    ) {
-                        errors.add(TrainingException.InvalidExerciseImage(exercise.id))
-                    }
-                }
+                errors.addAll(exerciseValidator.validate(exercise))
             }
 
             if (errors.isNotEmpty())

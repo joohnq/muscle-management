@@ -5,6 +5,7 @@ import com.google.firebase.FirebaseApp
 import com.joohnq.muscle_management.di.firebaseModule
 import com.joohnq.muscle_management.di.repositoryModule
 import com.joohnq.muscle_management.di.useCaseModule
+import com.joohnq.muscle_management.di.validatorModule
 import com.joohnq.muscle_management.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -18,6 +19,7 @@ class MuscleManagementApp: Application() {
         startKoin {
             androidContext(this@MuscleManagementApp)
             modules(
+                validatorModule,
                 firebaseModule,
                 repositoryModule,
                 useCaseModule,
