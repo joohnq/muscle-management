@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 
 class SplashViewModel(
     private val getUserIdUseCase: GetUserIdUseCase,
-    initialState: SplashContract.State = SplashContract.State()
+    initialState: SplashContract.State = SplashContract.State(),
 ) : BaseViewModel<SplashContract.State, SplashContract.Intent, SplashContract.SideEffect>(
     initialState = initialState
 ) {
@@ -21,13 +21,13 @@ class SplashViewModel(
         viewModelScope.launch {
             updateState { it.copy(isLoading = true) }
 
-            val id = getUserIdUseCase().getOrElse {error ->
+            val id = getUserIdUseCase().getOrElse { error ->
                 updateState { it.copy(isError = error) }
             }
 
             if (id == null) {
                 emitEffect(SplashContract.SideEffect.NavigateToSignIn)
-            }else{
+            } else {
                 emitEffect(SplashContract.SideEffect.NavigateToTrainingOverview)
             }
 

@@ -8,9 +8,19 @@ import com.joohnq.muscle_management.domain.use_case.training.AddTrainingUseCase
 import com.joohnq.muscle_management.ui.BaseViewModel
 import kotlinx.coroutines.launch
 
+fun <T> List<T>.move(fromIndex: Int, toIndex: Int): List<T> {
+    if (fromIndex !in this.indices || toIndex !in this.indices) return this
+
+    val mutableList = this.toMutableList()
+    val item = mutableList.removeAt(fromIndex)
+    mutableList.add(toIndex, item)
+
+    return mutableList
+}
+
 class AddTrainingViewModel(
     private val addTrainingUseCase: AddTrainingUseCase,
-    initialState: AddTrainingContract.State = AddTrainingContract.State()
+    initialState: AddTrainingContract.State = AddTrainingContract.State(),
 ) : BaseViewModel<AddTrainingContract.State, AddTrainingContract.Intent, AddTrainingContract.SideEffect>(
     initialState = initialState
 ) {
@@ -19,10 +29,12 @@ class AddTrainingViewModel(
             is AddTrainingContract.Intent.UpdateTrainingDescription -> {
                 updateState {
                     it.copy(
-                        training = state.value.training.copy(
-                            description = intent.description
-                        ),
-                        trainingDescriptionError = null
+                        trainingState = it.trainingState.copy(
+                            training = state.value.trainingState.training.copy(
+                                description = intent.description
+                            ),
+                            trainingDescriptionError = null
+                        )
                     )
                 }
             }
@@ -30,10 +42,12 @@ class AddTrainingViewModel(
             is AddTrainingContract.Intent.UpdateTrainingName -> {
                 updateState {
                     it.copy(
-                        training = state.value.training.copy(
-                            name = intent.name
-                        ),
-                        trainingNameError = null
+                        trainingState = it.trainingState.copy(
+                            training = state.value.trainingState.training.copy(
+                                name = intent.name
+                            ),
+                            trainingNameError = null
+                        )
                     )
                 }
             }
@@ -41,8 +55,9 @@ class AddTrainingViewModel(
             AddTrainingContract.Intent.AddExercise -> {
                 updateState {
                     it.copy(
-                        exercises = state.value.exercises.plus(
-                            Exercise()
+                        trainingState = it.trainingState.copy(
+                            exercises = state.value.trainingState.exercises.plus(Exercise()),
+                            trainingNameError = null
                         )
                     )
                 }
@@ -51,11 +66,13 @@ class AddTrainingViewModel(
             is AddTrainingContract.Intent.ToggleExerciseEdit -> {
                 updateState {
                     it.copy(
-                        editingExerciseId = if (it.editingExerciseId == intent.id) {
-                            null
-                        } else {
-                            intent.id
-                        }
+                        trainingState = it.trainingState.copy(
+                            editingExerciseId = if (it.trainingState.editingExerciseId == intent.id) {
+                                null
+                            } else {
+                                intent.id
+                            }
+                        )
                     )
                 }
             }
@@ -63,14 +80,16 @@ class AddTrainingViewModel(
             is AddTrainingContract.Intent.UpdateExerciseImage -> {
                 updateState {
                     it.copy(
-                        exercises = it.exercises.map { exercise ->
-                            if (exercise.id == intent.id) {
-                                exercise.copy(image = intent.image)
-                            } else {
-                                exercise
-                            }
-                        },
-                        editingExerciseImageError = null
+                        trainingState = it.trainingState.copy(
+                            exercises = it.trainingState.exercises.map { exercise ->
+                                if (exercise.id == intent.id) {
+                                    exercise.copy(image = intent.image)
+                                } else {
+                                    exercise
+                                }
+                            },
+                            editingExerciseImageError = null
+                        )
                     )
                 }
             }
@@ -78,14 +97,16 @@ class AddTrainingViewModel(
             is AddTrainingContract.Intent.UpdateExerciseName -> {
                 updateState {
                     it.copy(
-                        exercises = it.exercises.map { exercise ->
-                            if (exercise.id == intent.id) {
-                                exercise.copy(name = intent.name)
-                            } else {
-                                exercise
-                            }
-                        },
-                        editingExerciseNameError = null
+                        trainingState = it.trainingState.copy(
+                            exercises = it.trainingState.exercises.map { exercise ->
+                                if (exercise.id == intent.id) {
+                                    exercise.copy(name = intent.name)
+                                } else {
+                                    exercise
+                                }
+                            },
+                            editingExerciseNameError = null
+                        )
                     )
                 }
             }
@@ -93,13 +114,15 @@ class AddTrainingViewModel(
             is AddTrainingContract.Intent.UpdateExerciseObservations -> {
                 updateState {
                     it.copy(
-                        exercises = it.exercises.map { exercise ->
-                            if (exercise.id == intent.id) {
-                                exercise.copy(observations = intent.observations)
-                            } else {
-                                exercise
-                            }
-                        },
+                        trainingState = it.trainingState.copy(
+                            exercises = it.trainingState.exercises.map { exercise ->
+                                if (exercise.id == intent.id) {
+                                    exercise.copy(observations = intent.observations)
+                                } else {
+                                    exercise
+                                }
+                            },
+                        )
                     )
                 }
             }
@@ -107,9 +130,11 @@ class AddTrainingViewModel(
             is AddTrainingContract.Intent.DeleteExercise -> {
                 updateState {
                     it.copy(
-                        exercises = it.exercises.filter { exercise ->
-                            exercise.id != intent.id
-                        }
+                        trainingState = it.trainingState.copy(
+                            exercises = it.trainingState.exercises.filter { exercise ->
+                                exercise.id != intent.id
+                            }
+                        )
                     )
                 }
             }
@@ -120,10 +145,10 @@ class AddTrainingViewModel(
 
     private fun addTraining() {
         if (
-            !state.value.trainingNameError.isNullOrBlank() ||
-            !state.value.trainingDescriptionError.isNullOrBlank() ||
-            !state.value.editingExerciseNameError.isNullOrBlank() ||
-            !state.value.editingExerciseImageError.isNullOrBlank()
+            !state.value.trainingState.trainingNameError.isNullOrBlank() ||
+            !state.value.trainingState.trainingDescriptionError.isNullOrBlank() ||
+            !state.value.trainingState.editingExerciseNameError.isNullOrBlank() ||
+            !state.value.trainingState.editingExerciseImageError.isNullOrBlank()
         )
             return
 
@@ -131,7 +156,7 @@ class AddTrainingViewModel(
             updateState { it.copy(isLoading = true) }
 
             try {
-                addTrainingUseCase(state.value.training, state.value.exercises)
+                addTrainingUseCase(state.value.trainingState.training, state.value.trainingState.exercises)
                     .getOrThrow()
 
                 emitEffect(AddTrainingContract.SideEffect.NavigateBack)
@@ -140,22 +165,30 @@ class AddTrainingViewModel(
                     when (error) {
                         TrainingException.EmptyTrainingName ->
                             updateState {
-                                it.copy(trainingNameError = "O nome do treino é obrigatório")
+                                it.copy(
+                                    trainingState = it.trainingState.copy(
+                                        trainingNameError = "O nome do treino é obrigatório"
+                                    )
+                                )
                             }
 
                         is TrainingException.InvalidExerciseName ->
                             updateState {
                                 it.copy(
-                                    editingExerciseNameError = "O nome do exercício é obrigatório",
-                                    editingExerciseErrorId = error.id
+                                    trainingState = it.trainingState.copy(
+                                        editingExerciseNameError = "O nome do exercício é obrigatório",
+                                        editingExerciseErrorId = error.id
+                                    )
                                 )
                             }
 
                         is TrainingException.InvalidExerciseImage ->
                             updateState {
                                 it.copy(
-                                    editingExerciseImageError = "A URL da imagem é inválida",
-                                    editingExerciseErrorId = error.id
+                                    trainingState = it.trainingState.copy(
+                                        editingExerciseImageError = "A URL da imagem é inválida",
+                                        editingExerciseErrorId = error.id
+                                    )
                                 )
                             }
                     }
