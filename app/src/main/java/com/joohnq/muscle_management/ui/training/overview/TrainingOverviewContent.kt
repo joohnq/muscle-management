@@ -25,6 +25,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -115,7 +116,8 @@ fun TrainingOverviewContent(
                         onIntent(
                             TrainingOverviewContract.Intent.Delete(id)
                         )
-                    }
+                    },
+                    onRefresh = { onIntent(TrainingOverviewContract.Intent.GetAll) },
                 )
             }
         }
@@ -191,28 +193,35 @@ private fun LoadingView() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SuccessView(
     trainings: List<Pair<Training, List<Exercise>>>,
     onClick: (Pair<Training, List<Exercise>>) -> Unit,
+    onRefresh: () -> Unit,
     onDelete: (String) -> Unit
 ) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(vertical = 16.dp)
+    PullToRefreshBox(
+        isRefreshing = false,
+        onRefresh = onRefresh,
     ) {
-        items(
-            items = trainings,
-            key = { it.first.id }
-        ) { training ->
-            TrainingOverviewCard(
-                training = training,
-                onClick = { onClick(training) },
-                onDelete = { onDelete(training.first.id) },
-            )
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(vertical = 16.dp)
+        ) {
+            items(
+                items = trainings,
+                key = { it.first.id }
+            ) { training ->
+                TrainingOverviewCard(
+                    training = training,
+                    onClick = { onClick(training) },
+                    onDelete = { onDelete(training.first.id) },
+                )
+            }
         }
     }
 }

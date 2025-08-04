@@ -34,6 +34,7 @@ fun TrainingOverviewCard(
     onDelete: () -> Unit,
 ) {
     Card(
+        onClick = onClick,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface

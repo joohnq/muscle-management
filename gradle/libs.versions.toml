@@ -1,5 +1,7 @@
 [versions]
 agp = "8.12.0-rc01"
+coilCompose = "3.3.0"
+coilNetworkOkhttp = "3.3.0"
 koin = "4.1.0"
 firebaseBom = "34.0.0"
 kotlin = "2.2.0"
@@ -19,6 +21,8 @@ robolectric = "4.15.1"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }

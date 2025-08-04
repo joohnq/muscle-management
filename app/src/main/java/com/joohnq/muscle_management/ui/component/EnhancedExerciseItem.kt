@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
@@ -21,8 +22,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.joohnq.muscle_management.R
 import com.joohnq.muscle_management.domain.entity.Exercise
 
@@ -37,7 +41,7 @@ fun EnhancedExerciseItem(
     onEditToggle: () -> Unit,
     onNameChange: (String) -> Unit,
     onImageChange: (String) -> Unit,
-    onObservationsChange: (String) -> Unit
+    onObservationsChange: (String) -> Unit,
 ) {
     val borderColor = if (isEditing) {
         MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
@@ -115,22 +119,6 @@ fun EnhancedExerciseItem(
             )
 
             EnhancedExerciseTextField(
-                label = "Imagem (URL)",
-                placeholder = "Ex: https://exemplo.com/imagem.jpg",
-                value = exercise.image,
-                errorText = imageError,
-                onValueChange = onImageChange,
-                isEditing = isEditing,
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_image),
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            )
-
-            EnhancedExerciseTextField(
                 label = "Observações",
                 placeholder = "Ex: 3 séries de 10 repetições",
                 value = exercise.observations,
@@ -146,6 +134,33 @@ fun EnhancedExerciseItem(
                     )
                 }
             )
+
+            if (isEditing) {
+                EnhancedExerciseTextField(
+                    label = "Imagem (URL)",
+                    placeholder = "Ex: https://exemplo.com/imagem.jpg",
+                    value = exercise.image,
+                    errorText = imageError,
+                    onValueChange = onImageChange,
+                    isEditing = true,
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_image),
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                )
+            } else {
+                AsyncImage(
+                    model = exercise.image,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(4.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
     }
 }
