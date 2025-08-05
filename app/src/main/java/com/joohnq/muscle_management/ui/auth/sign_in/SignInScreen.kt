@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.compose.viewmodel.koinViewModel
@@ -27,12 +26,12 @@ fun SignInScreen(
         }
     }
 
-    LaunchedEffect(viewModel.sideEffect) {
+    LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
                 is SignInContract.SideEffect.NavigateNext -> navigateNext()
                 is SignInContract.SideEffect.ShowError -> {
-                    snackBarState.showSnackbar(sideEffect.error.message.toString())
+                    snackBarState.showSnackbar(sideEffect.message)
                 }
             }
         }

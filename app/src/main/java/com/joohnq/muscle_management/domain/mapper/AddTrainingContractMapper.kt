@@ -19,18 +19,18 @@ object AddTrainingContractMapper {
                 AddTrainingContract.Intent.ToggleExerciseEdit(id)
 
             is TrainingContract.Intent.UpdateExerciseImage ->
-                AddTrainingContract.Intent.UpdateExerciseImage(id, image)
+                AddTrainingContract.Intent.ChangeExerciseImage(id, image)
 
             is TrainingContract.Intent.UpdateExerciseName ->
-                AddTrainingContract.Intent.UpdateExerciseName(id, name)
+                AddTrainingContract.Intent.ChangeExerciseName(id, name)
 
             is TrainingContract.Intent.UpdateExerciseObservations ->
-                AddTrainingContract.Intent.UpdateExerciseObservations(id, observations)
+                AddTrainingContract.Intent.ChangeExerciseObservations(id, observations)
 
             is TrainingContract.Intent.UpdateTrainingDescription ->
-                AddTrainingContract.Intent.UpdateTrainingDescription(description)
+                AddTrainingContract.Intent.ChangeTrainingDescription(description)
 
             is TrainingContract.Intent.UpdateTrainingName ->
-                AddTrainingContract.Intent.UpdateTrainingName(name)
+                AddTrainingContract.Intent.ChangeTrainingName(name)
         }
 }

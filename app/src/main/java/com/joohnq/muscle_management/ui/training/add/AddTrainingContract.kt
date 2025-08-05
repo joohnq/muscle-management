@@ -9,15 +9,15 @@ sealed interface AddTrainingContract {
 
     sealed interface SideEffect {
         data object NavigateBack : SideEffect
-        data class ShowError(val error: Throwable) : SideEffect
+        data class ShowError(val message: String) : SideEffect
     }
 
     sealed interface Intent {
-        data class UpdateTrainingName(val name: String) : Intent
-        data class UpdateTrainingDescription(val description: String) : Intent
-        data class UpdateExerciseName(val id: String, val name: String) : Intent
-        data class UpdateExerciseImage(val id: String, val image: String) : Intent
-        data class UpdateExerciseObservations(val id: String, val observations: String) : Intent
+        data class ChangeTrainingName(val name: String) : Intent
+        data class ChangeTrainingDescription(val description: String) : Intent
+        data class ChangeExerciseName(val id: String, val name: String) : Intent
+        data class ChangeExerciseImage(val id: String, val image: String) : Intent
+        data class ChangeExerciseObservations(val id: String, val observations: String) : Intent
         data class DeleteExercise(val id: String) : Intent
         data class ToggleExerciseEdit(val id: String) : Intent
         data object AddExercise : Intent

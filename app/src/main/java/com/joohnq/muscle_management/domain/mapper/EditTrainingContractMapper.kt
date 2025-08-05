@@ -15,14 +15,14 @@ object EditTrainingContractMapper {
             is TrainingContract.Intent.ToggleExerciseEdit ->
                 EditTrainingContract.Intent.ToggleExerciseEdit(id)
             is TrainingContract.Intent.UpdateExerciseImage ->
-                EditTrainingContract.Intent.UpdateExerciseImage(id, image)
+                EditTrainingContract.Intent.ChangeExerciseImage(id, image)
             is TrainingContract.Intent.UpdateExerciseName ->
-                EditTrainingContract.Intent.UpdateExerciseName(id, name)
+                EditTrainingContract.Intent.ChangeExerciseName(id, name)
             is TrainingContract.Intent.UpdateExerciseObservations ->
-                EditTrainingContract.Intent.UpdateExerciseObservations(id, observations)
+                EditTrainingContract.Intent.ChangeExerciseObservations(id, observations)
             is TrainingContract.Intent.UpdateTrainingDescription ->
-                EditTrainingContract.Intent.UpdateTrainingDescription(description)
+                EditTrainingContract.Intent.ChangeTrainingDescription(description)
             is TrainingContract.Intent.UpdateTrainingName ->
-                EditTrainingContract.Intent.UpdateTrainingName(name)
+                EditTrainingContract.Intent.ChangeTrainingName(name)
         }
 }

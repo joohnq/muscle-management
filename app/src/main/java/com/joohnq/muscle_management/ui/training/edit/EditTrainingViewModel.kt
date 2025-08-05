@@ -7,13 +7,12 @@ import com.joohnq.muscle_management.domain.exception.ValidationException
 import com.joohnq.muscle_management.domain.use_case.training.GetByIdTrainingUseCase
 import com.joohnq.muscle_management.domain.use_case.training.UpdateTrainingUseCase
 import com.joohnq.muscle_management.ui.BaseViewModel
-import com.joohnq.muscle_management.ui.training.add.AddTrainingContract
 import kotlinx.coroutines.launch
 
 class EditTrainingViewModel(
     private val getByIdTrainingUseCase: GetByIdTrainingUseCase,
     private val updateTrainingUseCase: UpdateTrainingUseCase,
-    initialState: EditTrainingContract.State = EditTrainingContract.State()
+    initialState: EditTrainingContract.State = EditTrainingContract.State(),
 ) : BaseViewModel<EditTrainingContract.State, EditTrainingContract.Intent, EditTrainingContract.SideEffect>(
     initialState = initialState
 ) {
@@ -23,7 +22,7 @@ class EditTrainingViewModel(
 
             EditTrainingContract.Intent.UpdateTraining -> updateTraining()
 
-            is EditTrainingContract.Intent.UpdateTrainingDescription -> {
+            is EditTrainingContract.Intent.ChangeTrainingDescription -> {
                 updateState {
                     it.copy(
                         trainingState = it.trainingState.copy(
@@ -36,7 +35,7 @@ class EditTrainingViewModel(
                 }
             }
 
-            is EditTrainingContract.Intent.UpdateTrainingName -> {
+            is EditTrainingContract.Intent.ChangeTrainingName -> {
                 updateState {
                     it.copy(
                         trainingState = it.trainingState.copy(
@@ -54,7 +53,6 @@ class EditTrainingViewModel(
                     it.copy(
                         trainingState = it.trainingState.copy(
                             exercises = state.value.trainingState.exercises.plus(Exercise()),
-                            trainingNameError = null
                         )
                     )
                 }
@@ -74,7 +72,7 @@ class EditTrainingViewModel(
                 }
             }
 
-            is EditTrainingContract.Intent.UpdateExerciseImage -> {
+            is EditTrainingContract.Intent.ChangeExerciseImage -> {
                 updateState {
                     it.copy(
                         trainingState = it.trainingState.copy(
@@ -91,7 +89,7 @@ class EditTrainingViewModel(
                 }
             }
 
-            is EditTrainingContract.Intent.UpdateExerciseName -> {
+            is EditTrainingContract.Intent.ChangeExerciseName -> {
                 updateState {
                     it.copy(
                         trainingState = it.trainingState.copy(
@@ -108,7 +106,7 @@ class EditTrainingViewModel(
                 }
             }
 
-            is EditTrainingContract.Intent.UpdateExerciseObservations -> {
+            is EditTrainingContract.Intent.ChangeExerciseObservations -> {
                 updateState {
                     it.copy(
                         trainingState = it.trainingState.copy(
@@ -142,21 +140,23 @@ class EditTrainingViewModel(
         viewModelScope.launch {
             updateState { it.copy(isLoading = true) }
 
-            val result = getByIdTrainingUseCase(id).getOrElse { error ->
-                updateState { it.copy(isError = error) }
-                return@launch
-            }
+            try {
+                val result = getByIdTrainingUseCase(id).getOrThrow()
 
-            updateState {
-                it.copy(
-                    it.trainingState.copy(
-                        training = result.first,
-                        exercises = result.second
-                    ),
-                )
-            }
+                updateState {
+                    it.copy(
+                        it.trainingState.copy(
+                            training = result.first,
+                            exercises = result.second
+                        ),
+                    )
+                }
+            } catch (e: Exception) {
+                updateState { it.copy(isError = e) }
+            } finally {
+                updateState { it.copy(isLoading = false) }
 
-            updateState { it.copy(isLoading = false) }
+            }
         }
     }
 
@@ -208,7 +208,7 @@ class EditTrainingViewModel(
                     }
                 }
             } catch (e: Exception) {
-                emitEffect(EditTrainingContract.SideEffect.ShowError(e))
+                emitEffect(EditTrainingContract.SideEffect.ShowError(e.message.toString()))
             } finally {
                 updateState { it.copy(isLoading = false) }
             }

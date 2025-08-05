@@ -8,16 +8,6 @@ import com.joohnq.muscle_management.domain.use_case.training.AddTrainingUseCase
 import com.joohnq.muscle_management.ui.BaseViewModel
 import kotlinx.coroutines.launch
 
-fun <T> List<T>.move(fromIndex: Int, toIndex: Int): List<T> {
-    if (fromIndex !in this.indices || toIndex !in this.indices) return this
-
-    val mutableList = this.toMutableList()
-    val item = mutableList.removeAt(fromIndex)
-    mutableList.add(toIndex, item)
-
-    return mutableList
-}
-
 class AddTrainingViewModel(
     private val addTrainingUseCase: AddTrainingUseCase,
     initialState: AddTrainingContract.State = AddTrainingContract.State(),
@@ -26,7 +16,7 @@ class AddTrainingViewModel(
 ) {
     override fun onIntent(intent: AddTrainingContract.Intent) {
         when (intent) {
-            is AddTrainingContract.Intent.UpdateTrainingDescription -> {
+            is AddTrainingContract.Intent.ChangeTrainingDescription -> {
                 updateState {
                     it.copy(
                         trainingState = it.trainingState.copy(
@@ -39,7 +29,7 @@ class AddTrainingViewModel(
                 }
             }
 
-            is AddTrainingContract.Intent.UpdateTrainingName -> {
+            is AddTrainingContract.Intent.ChangeTrainingName -> {
                 updateState {
                     it.copy(
                         trainingState = it.trainingState.copy(
@@ -57,7 +47,6 @@ class AddTrainingViewModel(
                     it.copy(
                         trainingState = it.trainingState.copy(
                             exercises = state.value.trainingState.exercises.plus(Exercise()),
-                            trainingNameError = null
                         )
                     )
                 }
@@ -77,7 +66,7 @@ class AddTrainingViewModel(
                 }
             }
 
-            is AddTrainingContract.Intent.UpdateExerciseImage -> {
+            is AddTrainingContract.Intent.ChangeExerciseImage -> {
                 updateState {
                     it.copy(
                         trainingState = it.trainingState.copy(
@@ -94,7 +83,7 @@ class AddTrainingViewModel(
                 }
             }
 
-            is AddTrainingContract.Intent.UpdateExerciseName -> {
+            is AddTrainingContract.Intent.ChangeExerciseName -> {
                 updateState {
                     it.copy(
                         trainingState = it.trainingState.copy(
@@ -111,7 +100,7 @@ class AddTrainingViewModel(
                 }
             }
 
-            is AddTrainingContract.Intent.UpdateExerciseObservations -> {
+            is AddTrainingContract.Intent.ChangeExerciseObservations -> {
                 updateState {
                     it.copy(
                         trainingState = it.trainingState.copy(
@@ -156,8 +145,10 @@ class AddTrainingViewModel(
             updateState { it.copy(isLoading = true) }
 
             try {
-                addTrainingUseCase(state.value.trainingState.training, state.value.trainingState.exercises)
-                    .getOrThrow()
+                addTrainingUseCase(
+                    training = state.value.trainingState.training,
+                    exercises = state.value.trainingState.exercises
+                ).getOrThrow()
 
                 emitEffect(AddTrainingContract.SideEffect.NavigateBack)
             } catch (e: ValidationException) {
@@ -193,8 +184,8 @@ class AddTrainingViewModel(
                             }
                     }
                 }
-            } catch (error: Exception) {
-                emitEffect(AddTrainingContract.SideEffect.ShowError(error))
+            } catch (e: Exception) {
+                emitEffect(AddTrainingContract.SideEffect.ShowError(e.message.toString()))
             } finally {
                 updateState { it.copy(isLoading = false) }
             }

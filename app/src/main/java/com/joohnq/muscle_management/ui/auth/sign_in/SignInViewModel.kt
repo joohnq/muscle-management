@@ -16,19 +16,19 @@ class SignInViewModel(
     override fun onIntent(intent: SignInContract.Intent) {
         when (intent) {
             SignInContract.Intent.SignIn -> signIn()
-            is SignInContract.Intent.UpdateEmail -> {
+            is SignInContract.Intent.ChangeEmail -> {
                 updateState {
                     it.copy(email = it.email.copy(value = intent.email, error = null))
                 }
             }
 
-            is SignInContract.Intent.UpdateIsPasswordVisible -> {
+            is SignInContract.Intent.ChangeIsPasswordVisible -> {
                 updateState {
                     it.copy(isPasswordVisible = intent.visible)
                 }
             }
 
-            is SignInContract.Intent.UpdatePassword -> {
+            is SignInContract.Intent.ChangePassword -> {
                 updateState {
                     it.copy(password = it.password.copy(value = intent.password, error = null))
                 }
@@ -67,7 +67,7 @@ class SignInViewModel(
                     }
                 }
             } catch (e: Exception) {
-                emitEffect(SignInContract.SideEffect.ShowError(e))
+                emitEffect(SignInContract.SideEffect.ShowError(e.message.toString()))
             } finally {
                 updateState { it.copy(isLoading = false) }
             }

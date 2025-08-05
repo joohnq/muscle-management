@@ -8,5 +8,4 @@ data class Exercise(
     val image: String = "",
     val observations: String = "",
     val trainingId: String? = null,
-    val orderId: Int = 0
 )

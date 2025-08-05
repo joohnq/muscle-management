@@ -26,12 +26,12 @@ fun SignUpScreen(
         }
     }
 
-    LaunchedEffect(viewModel.sideEffect) {
+    LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
                 is SignUpContract.SideEffect.NavigateNext -> navigateNext()
                 is SignUpContract.SideEffect.ShowError -> {
-                    snackBarState.showSnackbar(sideEffect.error.message.toString())
+                    snackBarState.showSnackbar(sideEffect.message)
                 }
             }
         }

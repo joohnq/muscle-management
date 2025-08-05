@@ -12,9 +12,7 @@ fun SplashScreen(
 ) {
     LaunchedEffect(Unit) {
         viewModel.onIntent(SplashContract.Intent.GetUserId)
-    }
 
-    LaunchedEffect(viewModel.sideEffect) {
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
                 is SplashContract.SideEffect.NavigateToSignIn -> navigateToSignIn()

@@ -81,7 +81,7 @@ fun TrainingOverviewContent(
         },
         floatingActionButton = {
             AddFloatingActionButton(
-                onClick = { onEvent(TrainingOverviewContract.Event.AddTraining) },
+                onClick = { onEvent(TrainingOverviewContract.Event.NavigateToAddTraining) },
             )
         },
         containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -99,7 +99,7 @@ fun TrainingOverviewContent(
 
                 state.trainings.isEmpty() && !state.isLoading -> EmptyView(onAddTraining = {
                     onEvent(
-                        TrainingOverviewContract.Event.AddTraining
+                        TrainingOverviewContract.Event.NavigateToAddTraining
                     )
                 })
 
@@ -107,7 +107,7 @@ fun TrainingOverviewContent(
                     trainings = state.trainings,
                     onClick = { training ->
                         onEvent(
-                            TrainingOverviewContract.Event.EditTraining(
+                            TrainingOverviewContract.Event.NavigateToEditTraining(
                                 training.first.id
                             )
                         )

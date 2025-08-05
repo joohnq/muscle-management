@@ -10,13 +10,13 @@ sealed interface SignUpContract {
 
     sealed interface SideEffect {
         data object NavigateNext : SideEffect
-        data class ShowError(val error: Throwable) : SideEffect
+        data class ShowError(val message: String) : SideEffect
     }
 
     sealed interface Intent {
-        data class UpdateEmail(val email: String) : Intent
-        data class UpdatePassword(val password: String) : Intent
-        data class UpdateIsPasswordVisible(val visible: Boolean) : Intent
+        data class ChangeEmail(val email: String) : Intent
+        data class ChangePassword(val password: String) : Intent
+        data class ChangeIsPasswordVisible(val visible: Boolean) : Intent
         data object SignUp : Intent
     }
 

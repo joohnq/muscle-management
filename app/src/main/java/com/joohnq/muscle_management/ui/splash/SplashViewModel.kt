@@ -20,18 +20,22 @@ class SplashViewModel(
     private fun getUserId() {
         viewModelScope.launch {
             updateState { it.copy(isLoading = true) }
+            try {
+                val id = getUserIdUseCase().getOrThrow()
 
-            val id = getUserIdUseCase().getOrElse { error ->
-                updateState { it.copy(isError = error) }
+                val sideEffect =
+                    if (id == null) {
+                        SplashContract.SideEffect.NavigateToSignIn
+                    } else {
+                        SplashContract.SideEffect.NavigateToTrainingOverview
+                    }
+
+                emitEffect(sideEffect)
+            } catch (e: Exception) {
+                updateState { it.copy(isError = e) }
+            } finally {
+                updateState { it.copy(isLoading = false) }
             }
-
-            if (id == null) {
-                emitEffect(SplashContract.SideEffect.NavigateToSignIn)
-            } else {
-                emitEffect(SplashContract.SideEffect.NavigateToTrainingOverview)
-            }
-
-            updateState { it.copy(isLoading = false) }
         }
     }
 }

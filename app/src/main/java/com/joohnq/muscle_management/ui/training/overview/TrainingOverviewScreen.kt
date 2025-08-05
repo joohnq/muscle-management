@@ -12,35 +12,34 @@ import org.koin.compose.viewmodel.koinViewModel
 fun TrainingOverviewScreen(
     onNavigateToAddTraining: () -> Unit,
     onNavigateToSignIn: () -> Unit,
-    onEditTraining: (String) -> Unit,
-    viewModel: TrainingOverviewViewModel = koinViewModel()
+    onNavigateToEditTraining: (String) -> Unit,
+    viewModel: TrainingOverviewViewModel = koinViewModel(),
 ) {
     val snackBarState = remember { SnackbarHostState() }
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     fun onEvent(event: TrainingOverviewContract.Event) {
         when (event) {
-            TrainingOverviewContract.Event.AddTraining -> onNavigateToAddTraining()
-            is TrainingOverviewContract.Event.EditTraining ->
-                onEditTraining(event.id)
-        }
-    }
+            TrainingOverviewContract.Event.NavigateToAddTraining ->
+                onNavigateToAddTraining()
 
-    LaunchedEffect(viewModel.sideEffect) {
-        viewModel.sideEffect.collect { sideEffect ->
-            when (sideEffect) {
-                TrainingOverviewContract.SideEffect.NavigateToSignIn -> onNavigateToSignIn()
-                is TrainingOverviewContract.SideEffect.ShowError -> {
-                    snackBarState.showSnackbar(
-                        sideEffect.error.message.toString()
-                    )
-                }
-            }
+            is TrainingOverviewContract.Event.NavigateToEditTraining ->
+                onNavigateToEditTraining(event.id)
         }
     }
 
     LaunchedEffect(Unit) {
         viewModel.onIntent(TrainingOverviewContract.Intent.GetAll)
+
+        viewModel.sideEffect.collect { sideEffect ->
+            when (sideEffect) {
+                TrainingOverviewContract.SideEffect.NavigateToSignIn ->
+                    onNavigateToSignIn()
+
+                is TrainingOverviewContract.SideEffect.ShowError ->
+                    snackBarState.showSnackbar(sideEffect.message)
+            }
+        }
     }
 
     TrainingOverviewContent(

@@ -5,8 +5,8 @@ import com.joohnq.muscle_management.domain.entity.Training
 
 sealed interface TrainingOverviewContract {
     sealed interface Event {
-        data object AddTraining : Event
-        data class EditTraining(val id: String) : Event
+        data object NavigateToAddTraining : Event
+        data class NavigateToEditTraining(val id: String) : Event
     }
 
     sealed interface Intent{
@@ -17,7 +17,7 @@ sealed interface TrainingOverviewContract {
 
     sealed interface SideEffect{
         data object NavigateToSignIn: SideEffect
-        data class ShowError(val error: Throwable): SideEffect
+        data class ShowError(val message: String): SideEffect
     }
 
     data class State(

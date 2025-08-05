@@ -11,7 +11,7 @@ class TrainingOverviewViewModel(
     private val getAllTrainingUseCase: GetAllTrainingUseCase,
     private val signOutUseCase: SignOutUseCase,
     private val deleteTrainingUseCase: DeleteTrainingUseCase,
-    initialState: TrainingOverviewContract.State = TrainingOverviewContract.State()
+    initialState: TrainingOverviewContract.State = TrainingOverviewContract.State(),
 ) : BaseViewModel<TrainingOverviewContract.State, TrainingOverviewContract.Intent, TrainingOverviewContract.SideEffect>(
     initialState = initialState
 ) {
@@ -44,26 +44,28 @@ class TrainingOverviewViewModel(
 
     private fun signOut() {
         viewModelScope.launch {
-            signOutUseCase()
-                .getOrElse { error ->
-                    emitEffect(TrainingOverviewContract.SideEffect.ShowError(error))
-                }
+            try {
+                signOutUseCase().getOrThrow()
 
-            emitEffect(TrainingOverviewContract.SideEffect.NavigateToSignIn)
+                emitEffect(TrainingOverviewContract.SideEffect.NavigateToSignIn)
+            } catch (e: Exception) {
+                emitEffect(TrainingOverviewContract.SideEffect.ShowError(e.message.toString()))
+            }
         }
     }
 
     private fun delete(id: String) {
         viewModelScope.launch {
-            deleteTrainingUseCase(id)
-                .getOrElse {error ->
-                    emitEffect(TrainingOverviewContract.SideEffect.ShowError(error))
-                }
+            try {
+                deleteTrainingUseCase(id).getOrThrow()
 
-            updateState {
-                it.copy(
-                    trainings = it.trainings.filter { training -> training.first.id != id }
-                )
+                updateState {
+                    it.copy(
+                        trainings = it.trainings.filter { training -> training.first.id != id }
+                    )
+                }
+            } catch (e: Exception) {
+                emitEffect(TrainingOverviewContract.SideEffect.ShowError(e.message.toString()))
             }
         }
     }

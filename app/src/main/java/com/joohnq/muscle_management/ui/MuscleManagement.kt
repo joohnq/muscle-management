@@ -70,7 +70,7 @@ fun MuscleManagement() {
         }
         composable<Destination.TrainingOverview> {
             TrainingOverviewScreen(
-                onEditTraining = { id ->
+                onNavigateToEditTraining = { id ->
                     navController.navigate(Destination.EditTraining(id))
                 },
                 onNavigateToAddTraining = {

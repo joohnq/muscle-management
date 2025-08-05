@@ -1,6 +1,5 @@
 package com.joohnq.muscle_management.ui.training.add
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,7 +11,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun AddTrainingScreen(
     onGoBack: () -> Unit,
-    viewModel: AddTrainingViewModel = koinViewModel()
+    viewModel: AddTrainingViewModel = koinViewModel(),
 ) {
     val snackBarState = remember { SnackbarHostState() }
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -23,13 +22,13 @@ fun AddTrainingScreen(
         }
     }
 
-    LaunchedEffect(viewModel.sideEffect) {
+    LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
                 is AddTrainingContract.SideEffect.NavigateBack -> onGoBack()
-                is AddTrainingContract.SideEffect.ShowError -> {
-                    snackBarState.showSnackbar(sideEffect.error.message.toString())
-                }
+
+                is AddTrainingContract.SideEffect.ShowError ->
+                    snackBarState.showSnackbar(sideEffect.message)
             }
         }
     }

@@ -82,18 +82,18 @@ fun SignInContent(
 
                         AppAuthTextField(
                             field = state.email,
-                            onValueChange = { onIntent(SignInContract.Intent.UpdateEmail(it)) },
+                            onValueChange = { onIntent(SignInContract.Intent.ChangeEmail(it)) },
                         )
 
                         AppAuthPasswordTextField(
                             field = state.password,
                             isPasswordVisible = state.isPasswordVisible,
                             onValueChange = {
-                                onIntent(SignInContract.Intent.UpdatePassword(it))
+                                onIntent(SignInContract.Intent.ChangePassword(it))
                             },
                             onPasswordVisibilityToggle = {
                                 onIntent(
-                                    SignInContract.Intent.UpdateIsPasswordVisible(
+                                    SignInContract.Intent.ChangeIsPasswordVisible(
                                         !state.isPasswordVisible
                                     )
                                 )
