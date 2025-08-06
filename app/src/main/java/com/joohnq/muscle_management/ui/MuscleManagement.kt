@@ -26,7 +26,7 @@ fun NavHostController.replace(route: Any) {
 
 fun NavHostController.navigateWithCleanStack(route: Any) {
     navigate(route) {
-        popUpTo(graph.findStartDestination().id) {
+        popUpTo(0) {
             inclusive = true
         }
         launchSingleTop = true

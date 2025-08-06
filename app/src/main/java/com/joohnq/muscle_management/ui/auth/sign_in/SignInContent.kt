@@ -102,6 +102,7 @@ fun SignInContent(
 
                         AuthButton(
                             isLoading = state.isLoading,
+                            text = "Entrar",
                             onClick = {
                                 onIntent(SignInContract.Intent.SignIn)
                             }
@@ -118,7 +119,7 @@ fun SignInContent(
                 ) {
                     Text("Não tem uma conta?")
                     TextButton(onClick = { onEvent(SignInContract.Event.NavigateSignUp) }) {
-                        Text("Entrar")
+                        Text("Cadastrar-se")
                     }
                 }
             }

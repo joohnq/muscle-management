@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AuthButton(
     isLoading: Boolean,
+    text: String,
     onClick: () -> Unit
 ) {
     Button(
@@ -32,7 +33,7 @@ fun AuthButton(
             )
         } else {
             Text(
-                text = "Cadastrar-se",
+                text = text,
                 style = MaterialTheme.typography.labelLarge
             )
         }

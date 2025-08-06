@@ -102,6 +102,7 @@ fun SignUpContent(
 
                         AuthButton(
                             isLoading = state.isLoading,
+                            text = "Cadastrar-se",
                             onClick = {
                                 onIntent(SignUpContract.Intent.SignUp)
                             }
