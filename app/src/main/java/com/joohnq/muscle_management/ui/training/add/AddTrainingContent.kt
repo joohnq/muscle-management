@@ -17,6 +17,8 @@ fun AddTrainingContent(
 ) {
     TrainingSuccessView(
         snackBarState = snackBarState,
+        title = "Cadastrar Treino",
+        actionText = "Adicionar Treino",
         state = state.trainingState,
         onIntent = { onIntent(it.toAddTrainingIntent()) },
         onGoBack = { onEvent(AddTrainingContract.Event.OnGoBack) },

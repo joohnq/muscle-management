@@ -46,6 +46,8 @@ fun EditTrainingContent(
         else -> TrainingSuccessView(
             snackBarState = snackBarState,
             state = state.trainingState,
+            title = "Editar Treino",
+            actionText = "Atualizar Treino",
             onIntent = { onIntent(it.toEditTrainingIntent()) },
             onGoBack = { onEvent(EditTrainingContract.Event.OnGoBack) },
         )
@@ -119,13 +121,4 @@ private fun LoadingView() {
             )
         }
     }
-}
-
-@Preview
-@Composable
-private fun Preview() {
-    EditTrainingContent(
-        state = EditTrainingContract.State(),
-        onEvent = {}
-    )
 }

@@ -118,7 +118,7 @@ fun SignInContent(
                 ) {
                     Text("Não tem uma conta?")
                     TextButton(onClick = { onEvent(SignInContract.Event.NavigateSignUp) }) {
-                        Text("Cadastre-se")
+                        Text("Entrar")
                     }
                 }
             }

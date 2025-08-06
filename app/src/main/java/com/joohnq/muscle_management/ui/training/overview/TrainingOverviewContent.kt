@@ -267,27 +267,3 @@ private fun EmptyView(onAddTraining: () -> Unit) {
         }
     }
 }
-
-@Preview
-@Composable
-fun TrainingContentPreview() {
-    TrainingOverviewContent(
-        state = TrainingOverviewContract.State(
-            trainings = listOf(
-                Pair(
-                    Training(), listOf(Exercise(), Exercise())
-                )
-            )
-        ),
-    )
-}
-
-@Preview
-@Composable
-fun TrainingContentEmptyPreview() {
-    TrainingOverviewContent(
-        state = TrainingOverviewContract.State(
-            trainings = listOf()
-        ),
-    )
-}

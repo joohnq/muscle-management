@@ -44,6 +44,8 @@ import com.joohnq.muscle_management.ui.training.TrainingContract
 @Composable
 fun TrainingSuccessView(
     snackBarState: SnackbarHostState,
+    title: String,
+    actionText: String,
     state: TrainingContract.State,
     onGoBack: () -> Unit,
     onIntent: (TrainingContract.Intent) -> Unit,
@@ -54,7 +56,7 @@ fun TrainingSuccessView(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Editar Treino",
+                        text = title,
                         style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
                     )
                 },
@@ -86,7 +88,7 @@ fun TrainingSuccessView(
                         modifier = Modifier.size(24.dp)
                     )
                 },
-                text = { Text("Atualizar Treino") },
+                text = { Text(actionText) },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             )
