@@ -11,7 +11,13 @@
 
 ## 📱 Telas do Aplicativo
 
-![screenshot](./assets/tela1.png) ![screenshot](./assets/tela2.png)
+<p align="center">
+  <img src="./assets/sign_in.png" width="300"/>
+  <img src="./assets/sign_up.png" width="300"/>
+  <img src="./assets/overview.png" width="300"/>
+  <img src="./assets/add.png" width="300"/>
+  <img src="./assets/edit.png" width="300"/>
+</p>
 
 ## ⚙️ Funcionalidades
 
